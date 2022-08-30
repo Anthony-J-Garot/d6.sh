@@ -112,6 +112,20 @@ running_container_action() {
 			exit 0
 		fi
 		;;
+	pause | unpause)
+		if [[ "$CHOSEN_NO" == "" ]]; then
+			echo "You must specify which container number"
+			exit 1
+		fi
+
+		if [[ "$CHOSEN_NO" == "$2" ]]; then
+			echo "About to $ACTION container [${NAMES[$2]}]."
+			CMD="$DOCKER $ACTION $1"
+			echo $CMD
+			eval $CMD
+			exit 0
+		fi
+		;;
 	stop | stopall | rmi | destroy | rebuild)
 		# Anything running in this group of actions must be stopped first.
 		if [[ "$CHOSEN_NO" == "" || "$CHOSEN_NO" == "$2" ]]; then
@@ -334,7 +348,7 @@ ps)
 	esac
 	exit 0
 	;;
-tty|logs|stop|rm|rmi|inspect)
+tty|pause|unpause|logs|stop|rm|rmi|inspect)
 	# If they didn't specify a name number, we can prompt them.
 	if [[ "$2" == "" ]]; then
 		choose_name
